@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	mysql "github.com/yhyddr/article-crud/article/mysql"
+	mysql "github.com/yhyddr/article-crud/article/mysql/"
 )
 
 type ArticleController struct {
