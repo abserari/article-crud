@@ -106,7 +106,7 @@ func (a *ArticleController) updateByID(c *gin.Context) {
 		return
 	}
 
-	art, err := mysql.UpdateArticleByID(a.db, a.tableName, req.ArticleID, req.Text)
+	art, err := mysql.UpdateArticleByID(a.db, a.tableName, req.Text, req.ArticleID)
 	if err != nil {
 		c.Error(err)
 		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway, "art": art})

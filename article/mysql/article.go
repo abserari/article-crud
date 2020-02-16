@@ -85,9 +85,9 @@ func DeleteArticleByID(db *sql.DB, tableName string, id int) error {
 }
 
 //updateArticleByID
-func UpdateArticleByID(db *sql.DB, tableName string, id int) error {
+func UpdateArticleByID(db *sql.DB, tableName string, text string, id int) error {
 	sql := fmt.Sprintf(articleSQLstring[mysqlArticleUpdateByID], tableName)
-	_, err := db.Exec(sql, id)
+	_, err := db.Exec(sql, text, id)
 	return err
 }
 
