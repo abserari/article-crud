@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
-	article "github.com/yhyddr/article-crud/article/controller"
+	"github.com/yhyddr/article-crud/article/controller"
 )
 
 func main() {
@@ -16,7 +16,7 @@ func main() {
 		panic(err)
 	}
 
-	articleCon := article.New(dbConn, "article", "article.article_crud")
+	articleCon := controller.New(dbConn, "article", "article.article_crud")
 
 	articleCon.RegisterRouter(router.Group("/api/v1/article"))
 

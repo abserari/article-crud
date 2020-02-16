@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	mysql "github.com/yhyddr/article-crud/article/mysql"
+	"github.com/yhyddr/article-crud/article/mysql"
 )
 
 type ArticleController struct {
@@ -46,9 +46,10 @@ func (a *ArticleController) RegisterRouter(r gin.IRouter) {
 func (a *ArticleController) create(c *gin.Context) {
 	var (
 		req struct {
+			UserId      int    `json:"userid"         binding:"required"`
 			ArticleName string `json:"articlename"    binding:"required"`
 			Author      string `json:"author"         binding:"required"`
-			Text        string `json:"text"           binding:"required"`
+			Content     string `json:"content"        binding:"required"`
 		}
 	)
 
@@ -59,7 +60,7 @@ func (a *ArticleController) create(c *gin.Context) {
 		return
 	}
 
-	id, err := mysql.InsertArticle(a.db, a.tableName, req.ArticleName, req.Author, req.Text)
+	id, err := mysql.CreateArticle(a.db, a.tableName, req.UserId, req.ArticleName, req.Author, req.Content)
 	if err != nil {
 		c.Error(err)
 		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
@@ -99,7 +100,7 @@ func (a *ArticleController) updateByID(c *gin.Context) {
 	var (
 		req struct {
 			ArticleID int    `json:"articleid"     binding:"required"`
-			Text      string `json:"text"          binding:"required"`
+			Content   string `json:"content"       binding:"required"`
 		}
 	)
 
@@ -110,7 +111,7 @@ func (a *ArticleController) updateByID(c *gin.Context) {
 		return
 	}
 
-	err = mysql.UpdateArticleByID(a.db, a.tableName, req.Text, req.ArticleID)
+	err = mysql.UpdateArticleByID(a.db, a.tableName, req.Content, req.ArticleID)
 	if err != nil {
 		c.Error(err)
 		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})

@@ -7,10 +7,11 @@ import (
 )
 
 type Article struct {
-	ArticleID   int
+	UserID      int64
+	ArticleID   int64
 	ArticleName string
 	Author      string
-	Text        string
+	Content     string
 }
 
 const (
@@ -28,18 +29,19 @@ var (
 	articleSQLstring = []string{
 		`CREATE DATABASE IF NOT EXISTS %s`,
 		`CREATE TABLE IF NOT EXISTS %s (
-			articleId    INT           NOT NULL AUTO_INCREMENT,
+			articleId    INT(64)       NOT NULL AUTO_INCREMENT,
+			userId       INT(64)       NOT NULL,
 			articleName  VARCHAR(128)  NOT NULL,
 			author       VARCHAR(128)  NOT NULL,
-			text         TEXT          NOT NULL,
+			content      TEXT          NOT NULL,
 			PRIMARY KEY (articleId)
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
-		`INSERT INTO %s (articleName,author,text) VALUES (?,?,?)`,
+		`INSERT INTO %s (userId,articleName,author,content) VALUES (?,?,?,?)`,
 		`DELETE FROM %s WHERE articleId = ? LIMIT 1`,
-		// `UPDATE %s.%s SET articleName = ? WHERE id = ? LIMIT 1`
-		// `UPDATE %s.%s SET author = ? WHERE id = ? LIMIT 1`,
-		`UPDATE %s SET text = ? WHERE articleId = ? LIMIT 1`,
-		`SELECT * FROM %s WHERE articleId = ? LIMIT 1`,
+		// `UPDATE %s SET articleName = ? WHERE id = ? LIMIT 1`
+		// `UPDATE %s SET author = ? WHERE id = ? LIMIT 1`,
+		`UPDATE %s SET content = ? WHERE articleId = ? LIMIT 1`,
+		`SELECT articleId, articleName, author, content FROM %s WHERE articleId = ? LIMIT 1`,
 	}
 )
 
@@ -57,10 +59,10 @@ func CreateTable(db *sql.DB, tableName string) error {
 	return err
 }
 
-//insertArticle
-func InsertArticle(db *sql.DB, tableName string, articleName string, author string, text string) (int, error) {
+//createArticle
+func CreateArticle(db *sql.DB, tableName string, userId int, articleName string, author string, content string) (int, error) {
 	sql := fmt.Sprintf(articleSQLstring[mysqlArticleInsert], tableName)
-	result, err := db.Exec(sql, articleName, author, text)
+	result, err := db.Exec(sql, userId, articleName, author, content)
 	if err != nil {
 		return 0, err
 	}
@@ -85,9 +87,9 @@ func DeleteArticleByID(db *sql.DB, tableName string, id int) error {
 }
 
 //updateArticleByID
-func UpdateArticleByID(db *sql.DB, tableName string, text string, id int) error {
+func UpdateArticleByID(db *sql.DB, tableName string, content string, id int) error {
 	sql := fmt.Sprintf(articleSQLstring[mysqlArticleUpdateByID], tableName)
-	_, err := db.Exec(sql, text, id)
+	_, err := db.Exec(sql, content, id)
 	return err
 }
 
@@ -104,7 +106,7 @@ func QueryArticleByID(db *sql.DB, tableName string, id int) (*Article, error) {
 	defer rows.Close()
 
 	for rows.Next() {
-		if err := rows.Scan(&art.ArticleID, &art.ArticleName, &art.Author, &art.Text); err != nil {
+		if err := rows.Scan(&art.ArticleID, &art.ArticleName, &art.Author, &art.Content); err != nil {
 			return nil, err
 		}
 	}
