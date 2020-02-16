@@ -16,7 +16,7 @@ func main() {
 		panic(err)
 	}
 
-	articleCon := article.New(dbConn, "article")
+	articleCon := article.New(dbConn, "article", "article_crud")
 
 	articleCon.RegisterRouter(router.Group("/api/v1/article"))
 

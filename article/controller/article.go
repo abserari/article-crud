@@ -11,12 +11,14 @@ import (
 
 type ArticleController struct {
 	db        *sql.DB
+	DBName    string
 	tableName string
 }
 
-func New(db *sql.DB, tableName string) *ArticleController {
+func New(db *sql.DB, DBName string, tableName string) *ArticleController {
 	return &ArticleController{
 		db:        db,
+		DBName:    DBName,
 		tableName: tableName,
 	}
 }
@@ -27,7 +29,9 @@ func (a *ArticleController) RegisterRouter(r gin.IRouter) {
 		log.Fatal("[InitRouter]: server is nil")
 	}
 
-	err := mysql.CreateTable(a.db, a.tableName)
+	err := mysql.CreateDB(a.db, a.DBName)
+
+	err = mysql.CreateTable(a.db, a.tableName)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -106,10 +110,10 @@ func (a *ArticleController) updateByID(c *gin.Context) {
 		return
 	}
 
-	art, err := mysql.UpdateArticleByID(a.db, a.tableName, req.Text, req.ArticleID)
+	err = mysql.UpdateArticleByID(a.db, a.tableName, req.Text, req.ArticleID)
 	if err != nil {
 		c.Error(err)
-		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway, "art": art})
+		c.JSON(http.StatusBadGateway, gin.H{"status": http.StatusBadGateway})
 		return
 	}
 

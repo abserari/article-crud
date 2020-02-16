@@ -36,16 +36,16 @@ var (
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 		`INSERT INTO %s (articleName,author,text) VALUES (?,?,?)`,
 		`DELETE FROM %s WHERE articleId = ? LIMIT 1`,
-		// `UPDATE %s SET articleName = ? , updated = ? WHERE id = ? LIMIT 1`
-		// `UPDATE %s SET author = ? , updated = ? WHERE id = ? LIMIT 1`,
-		`UPDATE %s SET text = ? , updated = ? WHERE articleId = ? LIMIT 1`,
+		// `UPDATE %s SET articleName = ? WHERE id = ? LIMIT 1`
+		// `UPDATE %s SET author = ? WHERE id = ? LIMIT 1`,
+		`UPDATE %s SET text = ? WHERE articleId = ? LIMIT 1`,
 		`SELECT * FROM %s WHERE articleId = ? LIMIT 1 LOCK IN SHARE MODE`,
 	}
 )
 
 //createDB
-func CreateDB(db *sql.DB, createDB string) error {
-	sql := fmt.Sprintf(articleSQLstring[mysqlArticleCreateDB], createDB)
+func CreateDB(db *sql.DB, DBName string) error {
+	sql := fmt.Sprintf(articleSQLstring[mysqlArticleCreateDB], DBName)
 	_, err := db.Exec(sql)
 	return err
 }
