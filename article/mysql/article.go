@@ -2,9 +2,8 @@ package mysql
 
 import (
 	"database/sql"
-	"fmt"
-	"time"
 	"errors"
+	"fmt"
 )
 
 type Article struct {
@@ -37,7 +36,7 @@ var (
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 		`INSERT INTO %s (articleName,author,text) VALUES (?,?,?)`,
 		`DELETE FROM %s WHERE articleId = ? LIMIT 1`,
-		// `UPDATE %s SET articleName = ? , updated = ? WHERE id = ? LIMIT 1` 
+		// `UPDATE %s SET articleName = ? , updated = ? WHERE id = ? LIMIT 1`
 		// `UPDATE %s SET author = ? , updated = ? WHERE id = ? LIMIT 1`,
 		`UPDATE %s SET text = ? , updated = ? WHERE articleId = ? LIMIT 1`,
 		`SELECT * FROM %s WHERE articleId = ? LIMIT 1 LOCK IN SHARE MODE`,
@@ -93,10 +92,10 @@ func UpdateArticleByID(db *sql.DB, tableName string, id int) error {
 }
 
 //queryArticleByID
-func QueryArticleByID(db *sql.DB, tableName string, id int) (*Article error) {
+func QueryArticleByID(db *sql.DB, tableName string, id int) (*Article, error) {
 	var art Article
 
-	sql: = fmt.Sprintf(articleSQLstring[mysqlArticleUpdateByID], tableName)
+	sql := fmt.Sprintf(articleSQLstring[mysqlArticleUpdateByID], tableName)
 	rows, err := db.Query(sql, id)
 	if err != nil {
 		return nil, err
