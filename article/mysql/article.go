@@ -36,10 +36,10 @@ var (
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`,
 		`INSERT INTO %s (articleName,author,text) VALUES (?,?,?)`,
 		`DELETE FROM %s WHERE articleId = ? LIMIT 1`,
-		// `UPDATE %s SET articleName = ? WHERE id = ? LIMIT 1`
-		// `UPDATE %s SET author = ? WHERE id = ? LIMIT 1`,
+		// `UPDATE %s.%s SET articleName = ? WHERE id = ? LIMIT 1`
+		// `UPDATE %s.%s SET author = ? WHERE id = ? LIMIT 1`,
 		`UPDATE %s SET text = ? WHERE articleId = ? LIMIT 1`,
-		`SELECT * FROM %s WHERE articleId = ? LIMIT 1 LOCK IN SHARE MODE`,
+		`SELECT * FROM %s WHERE articleId = ? LIMIT 1`,
 	}
 )
 
@@ -95,7 +95,7 @@ func UpdateArticleByID(db *sql.DB, tableName string, text string, id int) error 
 func QueryArticleByID(db *sql.DB, tableName string, id int) (*Article, error) {
 	var art Article
 
-	sql := fmt.Sprintf(articleSQLstring[mysqlArticleUpdateByID], tableName)
+	sql := fmt.Sprintf(articleSQLstring[mysqlArticleQueryByID], tableName)
 	rows, err := db.Query(sql, id)
 	if err != nil {
 		return nil, err
