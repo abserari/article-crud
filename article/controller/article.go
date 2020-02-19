@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
 	"github.com/yhyddr/article-crud/article/mysql"
 )
@@ -24,7 +25,7 @@ func New(db *sql.DB, DBName string, tableName string) *ArticleController {
 }
 
 // RegisterRouter
-func (a *ArticleController) RegisterRouter(r gin.IRouter) {
+func (a *ArticleController) RegisterRouter(r gin.IRouter, JWT *jwt.GinJWTMiddleware) {
 	if r == nil {
 		log.Fatal("[InitRouter]: server is nil")
 	}
@@ -36,10 +37,14 @@ func (a *ArticleController) RegisterRouter(r gin.IRouter) {
 		log.Fatal(err)
 	}
 
-	r.POST("/create", a.create)
-	r.POST("/delete", a.deleteByID)
-	r.POST("/update", a.updateByID)
-	r.POST("/query", a.queryByID)
+	r.Use(JWT.MiddlewareFunc())
+	{
+		r.POST("/create", a.create)
+		r.POST("/delete", a.deleteByID)
+		r.POST("/update", a.updateByID)
+		r.POST("/query", a.queryByID)
+	}
+
 }
 
 // create
